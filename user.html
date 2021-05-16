@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>刷课教程</title>
+  <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+  <script>
+    var key;
+    $(document).ready(function() {
+      initCheck();
+      $("#setup").click(function() {
+        key = getQuery("key");
+        tryLoad();
+      });
+    });
+    function initCheck() {
+      $("div").hide();
+      key = getQuery("key");
+      $.get("/js/check?key=" + key, function(data) {
+        console.log(data);
+        if (data.status == "F") {
+          if (key == null) {
+            alert('无效凭证');
+          } else if (key.length != 16) {
+            alert('无效凭证');
+          } else {
+            alert('凭证已过期');
+          }
+          to404();
+        } else {
+          $("div").show();
+        }
+      });
+    }
+    function to404() {
+      window.open('https://404.dnomd343.top/','_self');
+    }
+    function tryLoad() {
+      $.get("/js/check?key=" + key, function(data) {
+        console.log(data);
+        if (data.status == "F") {
+          if (key == null) {
+            alert('无效凭证');
+          } else if (key.length != 16) {
+            alert('无效凭证');
+          } else {
+            alert('凭证已过期');
+          }
+        } else {
+          loadScript();
+        }
+      });
+    }
+    function loadScript() {
+      window.open('https://menma01.com/js/query/script_1.user.js?key=' + key, '_self');
+      window.open('https://menma01.com/js/query/script_2.user.js?key=' + key, '_self'); 
+      window.open('https://menma01.com/js/query/script_3.user.js?key=' + key, '_self');
+    }
+    function installTampermonkey() {
+      window.open('https://microsoftedge.microsoft.com/addons/detail/tampermonkey/iikmkjmpaadaobahmlepeloendndfphd?hl=zh-CN');
+    }
+    function getQuery(name) {
+      var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+      var result = window.location.search.substr(1).match(reg);
+      if (result != null) {
+          return unescape(result[2]);
+      } else {
+          return null;
+      }
+    }
+  </script>
+  <style>
+    div {
+      text-align: center;
+      margin-top: 150px;
+    }
+  </style>
+</head>
+<body>
+  <div>
+    <button onclick="installTampermonkey()">先点我安装插件</button>
+    <br>
+    <br>
+    <button id="setup">再点我安装脚本</button>
+  </div>
+</body>
+</html>

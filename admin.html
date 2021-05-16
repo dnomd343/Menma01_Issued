@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>刷课教程 - 后台</title>
+  <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+  <script>
+    var validity;
+    var url;
+    $(document).ready(function() {
+      $.get("/js/pw/status", function(data) {
+        console.log(data);
+        output(data);
+        showLimit();
+      });
+      $("#reset").click(function() {
+        renewKey();
+      });
+      $("#copy").click(function() {
+        copyToClip(url);
+      });
+    });
+    function checkStatus() {
+      $.get("/js/pw/status", function(data) {
+        console.log(data);
+        output(data);
+        showLimit();
+      });
+    }
+    function renewKey() {
+      $.get("/js/pw/new", function(data) {
+        console.log(data);
+        output(data);
+      });
+    }
+    function output(data) {
+        validity = data.validity;
+        url = 'https://menma01.com/js?key=' + data.passwd;
+        $("#validity").text(timestampToTime(data.validity));
+        $("#url").text(url);
+    }
+    function showLimit() {
+        now = parseInt(new Date().getTime() / 1000);
+        limit = validity - now;
+        if (limit < 0) {
+          $("#limit").text('（刷新中...）');
+          $.get("/js/pw/status", function(data) {
+            console.log(data);
+            output(data);
+          });
+        } else {
+          $("#limit").text('（剩余：' + limit + 's）');
+        }
+    }
+    function copyToClip(content, message) {
+      var aux = document.createElement("input"); 
+      aux.setAttribute("value", content); 
+      document.body.appendChild(aux); 
+      aux.select();
+      document.execCommand("copy"); 
+      document.body.removeChild(aux);
+      if (message == null) {
+        alert("复制成功");
+      }
+    }
+    function timestampToTime(timestamp) {
+      var date = new Date(timestamp * 1000);
+      var Y = date.getFullYear() + '-';
+      var M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
+      var D = (date.getDate() < 10 ? '0' + (date.getDate()) : date.getDate()) + ' ';
+      var h = (date.getHours() < 10 ? '0' + (date.getHours()) : date.getHours()) + ':';
+      var m = (date.getMinutes() < 10 ? '0' + (date.getMinutes()) : date.getMinutes()) + ':';
+      var s = (date.getSeconds() < 10 ? '0' + (date.getSeconds()) : date.getSeconds());
+      return Y + M + D + h + m + s;
+    }
+    var t1 = window.setInterval(showLimit, 1000);
+    var t2 = window.setInterval(checkStatus, 5000);
+  </script>
+  <style>
+    div {
+      text-align: center;
+      margin-top: 150px;
+    }
+    #validity {
+      display: inline-block;
+    }
+    #limit {
+      display: inline-block;
+    }
+    #copy {
+      margin-right: 10px;
+    }
+    #reset {
+      margin-left: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div>
+    <p id="validity"></p>
+    <p id="limit"></p>
+    <p id="url"></p>
+    <button id="copy">一键复制</button>
+    <button id="reset">重置链接</button>
+  </div>
+</body>
+</html>
